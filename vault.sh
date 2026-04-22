@@ -1,33 +1,28 @@
 #!/bin/bash
+set -euxo pipefail
+exec > /var/log/user-data.log 2>&1
 
-# Update system
-yum update -y
+yum install -y unzip curl
 
-# Install Docker
-amazon-linux-extras install docker -y
-systemctl start docker
-systemctl enable docker
+curl -O https://releases.hashicorp.com/vault/1.15.2/vault_1.15.2_linux_amd64.zip
+unzip vault_1.15.2_linux_amd64.zip
+mv vault /usr/local/bin/
 
-# Install Git
-yum install -y git
+cat <<EOF > /etc/systemd/system/vault.service
+[Unit]
+Description=Vault
+After=network.target
 
-# Add user to docker group
-usermod -aG docker ec2-user
+[Service]
+ExecStart=/usr/local/bin/vault server -dev -dev-listen-address=0.0.0.0:8200
+Restart=always
 
-# Wait for Docker
-sleep 30
+[Install]
+WantedBy=multi-user.target
+EOF
 
-# Clone repo (with Dockerfile)
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
+systemctl daemon-reload
+systemctl enable vault
+systemctl restart vault
 
-# Build image
-docker build -t my-vault .
-
-# Run Vault (NO vault.hcl)
-docker run -d \
-  -p 8200:8200 \
-  --name vault \
-  -e VAULT_DEV_ROOT_TOKEN_ID=root \
-  -e VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200 \
-  my-vault server -dev
+sleep 10

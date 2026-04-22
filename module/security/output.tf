@@ -13,3 +13,12 @@ output "jenkins_SG" {
 }
 
 
+output "security_compute" {
+  value= aws_security_group.compute.id
+}
+
+output "endpoint_sg" {
+  value= aws_security_group.endpoint_sg.id
+}
+
+

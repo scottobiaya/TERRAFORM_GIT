@@ -1,28 +1,20 @@
-output "cidr_blk" {
-  value = "10.0.0.0/16"
-}
-
-output "public_A_subnet" {
-    value = aws_subnet.public_A
-  
-}
-
-output "private_B_subnet" {
-    value = aws_subnet.public_B
-  
-}
-
-output "private_A_subnet" {
-    value = aws_subnet.private_A
-  
-}
-
-output "public_B_subnet" {
-    value = aws_subnet.private_B
-  
-}
-
 output "vpc_id" {
   value = aws_vpc.main.id
+}
+
+output "public_A_subnet_id" {
+  value = aws_subnet.public_A.id
+}
+
+output "public_B_subnet_id" {
+  value = aws_subnet.public_B.id
+}
+
+output "private_A_subnet_id" {
+  value = aws_subnet.private_A.id
+}
+
+output "private_B_subnet_id" {
+  value = aws_subnet.private_B.id
 }
 
